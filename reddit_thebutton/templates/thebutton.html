@@ -1,1 +1,45 @@
-<div>WELCOME TO THE BUTTON</div>
+## THIS IS ALL JUNK STYLES TO BE REMOVED
+<style type="text/css">
+.thebutton-wrap {
+  text-align: center;
+  margin: 0 auto;
+}
+
+.thebutton-form {
+  max-width: 500px;
+  display: inline-block;
+}
+
+#thebutton-timer {
+  border: none;
+  font-size: 80px;
+  font-weight: bold;
+  display: block;
+  text-align: center;
+  max-width: 100%;
+}
+
+
+#thebutton {
+  font-size: 40px;
+}
+</style>
+
+<div class="thebutton-wrap">
+  <form class="thebutton-form">
+    <input type="number" readonly id="thebutton-timer" value="60">
+    <button id="thebutton">👆</button>
+    <div class="thebutton-counter">
+      <span class="thebutton-counter">17,349</span>
+      <span class="thebutton-counter-description">&#32;redditors pressed the button.</span>
+    </div>
+  </form>
+</div>
+
+<% from r2.lib import js %>
+## YES THIS IS SUPER SCARY
+<script type="text/javascript">
+r.config.thebutton_websocket = "${unsafe(thing.websocket_url)}";
+</script>
+
+${unsafe(js.use("thebutton"))}

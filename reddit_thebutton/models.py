@@ -114,7 +114,7 @@ def _update_timer():
     expiration_time = has_timer_expired()
     if expiration_time:
         now = datetime.now(g.tz)
-        seconds_elapsed = (now - expiration_time).total_seconds
+        seconds_elapsed = (now - expiration_time).total_seconds()
 
         websockets.send_broadcast(
             namespace="/thebutton", type="expired",
@@ -145,6 +145,7 @@ def _update_timer():
 
 def update_timer():
     while True:
+        g.reset_caches()
         _update_timer()
         sleep(UPDATE_INTERVAL.total_seconds())
 
@@ -163,13 +164,18 @@ def has_timer_expired():
             NamedGlobals.set(key, val)
         # update the cache
         g.thebuttoncache.set(key, val)
+
+    if val:
+        return _deserialize_datetime(val)
+
     return val
 
 
 def mark_timer_expired(expiration_time):
     key = _EXPIRED_KEY()
-    NamedGlobals.set(key, expiration_time)
-    g.thebuttoncache.set(key, expiration_time)
+    serialized = _serialize_datetime(expiration_time)
+    NamedGlobals.set(key, serialized)
+    g.thebuttoncache.set(key, serialized)
 
 
 def _serialize_datetime(dt):

@@ -24,7 +24,6 @@ class TheButton(Plugin):
     js = {
         "thebutton": Module("thebutton.js",
             "websocket.js",
-
             "thebutton.js",
         )
     }
@@ -62,3 +61,6 @@ class TheButton(Plugin):
             ButtonApiController,
             ButtonController,
         )
+
+        from reddit_thebutton.hooks import hooks
+        hooks.register_all()

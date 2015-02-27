@@ -1,7 +1,1 @@
 <%inherit file="reddit.html"/>
-
-<%def name="javascript_bottom()">
-    <% from r2.lib import js %>
-    ${parent.javascript_bottom()}
-    ${unsafe(js.use("thebutton"))}
-</%def>

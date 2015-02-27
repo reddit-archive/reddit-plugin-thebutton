@@ -15,6 +15,14 @@ r.thebutton = {
         } else {
             r.debug("didn't get thebutton_websocket")
         }
+
+        $('#thebutton').on('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          $.request('press_button', {"eschaton": "immanentized"}, function(response) {
+            console.log(response);
+          })
+        })
     },
 
     _onExpired: function(message) {
@@ -33,6 +41,7 @@ r.thebutton = {
     _onTicking: function(message) {
         var secondsLeft = message.seconds_left;
         r.debug(secondsLeft + " seconds remaining");
+        $('#thebutton-timer').val(parseInt(message.seconds_left, 10));
     },
 }
 
