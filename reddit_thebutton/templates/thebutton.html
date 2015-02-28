@@ -2,12 +2,20 @@
 <style type="text/css">
 .thebutton-wrap {
   text-align: center;
-  margin: 0 auto;
 }
 
 .thebutton-form {
-  max-width: 500px;
+  background: #FAFAFA;
+  background-image: radial-gradient(50% 125%, #FFFFFF 25%, rgba(255,255,255,0.00) 100%);
+  border: 1px solid #999999;
+  overflow: hidden;
+  font-family: Georgia;
+  color: #4A4A4A;
+  height: 80px;
   display: inline-block;
+  padding-right: 70px;
+  padding-left: 15px;
+  margin: 10px auto;
 }
 
 #thebutton-timer {
@@ -21,17 +29,103 @@
 
 
 #thebutton {
-  font-size: 40px;
+  font-size: 1px;
+  width: 100px;
+  height: 30px;
+  text-indent: -999999px;
+
+  background: #999999;
+  background-image: linear-gradient(-180deg, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0.02) 100%);
+  box-shadow: 0px 2px 0px 0px #666666;
+  border-radius: 4px;
+  border: none;
+  outline: none;
 }
+
+#thebutton:active {
+  background: #808080;
+  background-image: linear-gradient(-180deg, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0.02) 100%);
+  box-shadow: inset 0px 1px 0px 0px rgba(0,0,0,0.20);
+  border-radius: 4px;
+}
+
+.thebutton-form h1 {
+  float: left;
+  line-height: 60px;
+  margin: 0;
+  font-size: 24px;
+  padding: 0 25px 0 10px;
+}
+
+.thebutton-form label {
+  float: left;
+  line-height: 60px;
+  font-size: 30px;
+}
+
+#thebutton {
+  float: left;
+  line-height: 60px;
+  margin-top: 15px;
+  margin-left: 15px;
+}
+
+.thebutton-pie {
+  float: left;
+  display: inline-block;
+  width: 80px;
+  line-height: 60px;
+  margin-left: 15px;
+  text-align: center;
+}
+
+#thebutton-timer {
+  float: left;
+  min-width: 60px;
+  font-size: 32px;
+  line-height: 60px;
+  display: inline;
+  max-width: 100px;
+}
+
+.thebutton-counter {
+  float: left;
+  line-height: 1.4;
+  vertical-align: middle;
+  height: 30px;
+  margin-top: 15px;   /* hax */
+  text-align: left;
+}
+
+.thebutton-counter span {
+  line-height: 1;
+}
+
+.thebutton-participants {
+  font-size: 12px;
+}
+
+.thebutton-participants-description {
+  font-size: 12px;
+  color: #737373;
+}
+
 </style>
 
 <div class="thebutton-wrap">
   <form class="thebutton-form">
+    <h1>the button</h1>
+
+    <label for="thebutton">☛</label>
+    <button id="thebutton" title="BUTTON PRESS BUTTON PRESS IT BUTTON THE BUTTON PRESS IT PRESS THE BUTTON BUTTON BUTTON PRESS IT THE BUTTON THE BUTTON PRESS BUTTON IT PRESS IT THE BUTTON PRESS IT NOW">[you feel an overwhelming urge to press the button]</button>
+
+    <div class="thebutton-pie">(pie)</div>
+
     <input type="number" readonly id="thebutton-timer" value="60">
-    <button id="thebutton">👆</button>
+
     <div class="thebutton-counter">
-      <span class="thebutton-counter">17,349</span>
-      <span class="thebutton-counter-description">&#32;redditors pressed the button.</span>
+      <span class="thebutton-participants">17,349</span><br />
+      <span class="thebutton-participants-description">&#32;participants</span>
     </div>
   </form>
 </div>
