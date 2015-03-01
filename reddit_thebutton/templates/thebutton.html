@@ -29,11 +29,14 @@
 
 
 #thebutton {
-  font-size: 1px;
+  float: left;
+  margin-top: 15px;
+  margin-left: 15px;
   width: 100px;
   height: 30px;
+  line-height: 60px;
+  font-size: 1px;
   text-indent: -999999px;
-
   background: #999999;
   background-image: linear-gradient(-180deg, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0.02) 100%);
   box-shadow: 0px 2px 0px 0px #666666;
@@ -57,23 +60,34 @@
   padding: 0 25px 0 10px;
 }
 
-.thebutton-form label {
+.thebutton-wrap label {
   float: left;
   line-height: 60px;
   font-size: 30px;
 }
 
+.thebutton-wrap label:before {
+  content: "☛";
+}
+
+.thebutton-wrap.complete label:before {
+  content: "✓";
+}
+
+.thebutton-wrap.complete #thebutton {
+  background: rgba(121,120,120,0.40);
+  box-shadow: inset 0px 1px 0px 0px rgba(0,0,0,0.10);
+  cursor: not-allowed;
+}
+
 #thebutton {
-  float: left;
-  line-height: 60px;
-  margin-top: 15px;
-  margin-left: 15px;
 }
 
 .thebutton-pie {
   float: left;
   display: inline-block;
   width: 80px;
+  height: 60px;
   line-height: 60px;
   margin-left: 15px;
   text-align: center;
@@ -112,14 +126,14 @@
 
 </style>
 
-<div class="thebutton-wrap">
+<div class="thebutton-wrap c-hidden">
   <form class="thebutton-form">
     <h1>the button</h1>
 
-    <label for="thebutton">☛</label>
+    <label for="thebutton"></label>
     <button id="thebutton" title="BUTTON PRESS BUTTON PRESS IT BUTTON THE BUTTON PRESS IT PRESS THE BUTTON BUTTON BUTTON PRESS IT THE BUTTON THE BUTTON PRESS BUTTON IT PRESS IT THE BUTTON PRESS IT NOW">[you feel an overwhelming urge to press the button]</button>
 
-    <div class="thebutton-pie">(pie)</div>
+    <div class="thebutton-pie"></div>
 
     <input type="number" readonly id="thebutton-timer" value="60">
 
@@ -136,4 +150,5 @@
 r.config.thebutton_websocket = "${unsafe(thing.websocket_url)}";
 </script>
 
+<script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1.1','packages':['corechart']}]}"></script>
 ${unsafe(js.use("thebutton"))}

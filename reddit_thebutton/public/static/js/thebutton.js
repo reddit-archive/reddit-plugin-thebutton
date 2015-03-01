@@ -1,5 +1,7 @@
 r.thebutton = {
     init: function() {
+        this._chart = new google.visualization.PieChart($('.thebutton-pie').get(0));
+
         r.debug("in r.thebutton.init()")
 
         if (r.config.thebutton_websocket) {
@@ -25,9 +27,34 @@ r.thebutton = {
         })
     },
 
+    _drawPie: function(secondsLeft) {
+      var totalSeconds = 60;
+      var secondsSpent = totalSeconds - secondsLeft;
+      var data = google.visualization.arrayToDataTable([
+        ['', ''],
+        ['gone', secondsSpent],
+        ['remaining', secondsLeft],
+      ]);
+
+      var options = {
+        legend: 'none',
+        pieSliceText: 'none',
+        slices: {
+          0: { color: '#C8C8C8' },
+          1: { color: '#4A4A4A' }
+        },
+        enableInteractivity: false
+      };
+
+      this._chart.draw(data, options);
+    },
+
     _onExpired: function(message) {
         var expiredSeconds = message.seconds_elapsed;
         r.debug("timer expired " + expiredSeconds + " ago");
+        $('.thebutton-wrap').removeClass('c-hidden').addClass('complete');
+        $('#thebutton-timer').val(0);
+        r.thebutton._drawPie(0);
     },
 
     _onNotStarted: function(message) {
@@ -36,12 +63,15 @@ r.thebutton = {
 
     _onJustExpired: function(message) {
         r.debug("timer just expired");
+        $('.thebutton-wrap').removeClass('c-hidden').addClass('complete');
     },
 
     _onTicking: function(message) {
         var secondsLeft = message.seconds_left;
         r.debug(secondsLeft + " seconds remaining");
         $('#thebutton-timer').val(parseInt(message.seconds_left, 10));
+        $('.thebutton-wrap').removeClass('c-hidden complete');
+        r.thebutton._drawPie(parseInt(secondsLeft, 10));
     },
 }
 
