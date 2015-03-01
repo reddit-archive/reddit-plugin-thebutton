@@ -18,16 +18,6 @@
   margin: 10px auto;
 }
 
-#thebutton-timer {
-  border: none;
-  font-size: 80px;
-  font-weight: bold;
-  display: block;
-  text-align: center;
-  max-width: 100%;
-}
-
-
 #thebutton {
   float: left;
   margin-top: 15px;
@@ -43,6 +33,11 @@
   border-radius: 4px;
   border: none;
   outline: none;
+}
+
+#thebutton:hover ~ label {
+  transform: rotate(-8deg);
+  -webkit-transform: rotate(-8deg);
 }
 
 #thebutton:active {
@@ -80,9 +75,6 @@
   cursor: not-allowed;
 }
 
-#thebutton {
-}
-
 .thebutton-pie {
   float: left;
   display: inline-block;
@@ -96,10 +88,18 @@
 #thebutton-timer {
   float: left;
   min-width: 60px;
-  font-size: 32px;
   line-height: 60px;
   display: inline;
   max-width: 100px;
+}
+
+.thebutton-numeral {
+  font-family: monospace;
+  font-weight: bold;
+  border: 1px solid rgba(73,73,73,0.40);
+  font-size: 28px;
+  margin: 1px;
+  padding: 3px 2px;
 }
 
 .thebutton-counter {
@@ -108,6 +108,7 @@
   vertical-align: middle;
   height: 30px;
   margin-top: 15px;   /* hax */
+  margin-left: 15px;
   text-align: left;
 }
 
@@ -124,11 +125,18 @@
   color: #737373;
 }
 
+#thebutton-s-10ms,
+#thebutton-s-100ms {
+  color: #999999;
+}
+
 </style>
 
 <%!
     from babel.numbers import format_number
     from pylons import g
+
+    from r2.lib.filters import jssafe
 %>
 
 <div class="thebutton-wrap c-hidden">
@@ -140,7 +148,13 @@
 
     <div class="thebutton-pie"></div>
 
-    <input type="number" readonly id="thebutton-timer" value="60">
+    ## Todo - position absolute these to stop killing the browser perf.
+    <span id="thebutton-timer">
+      <span class="thebutton-numeral" id="thebutton-s-10s">0</span>
+      <span class="thebutton-numeral" id="thebutton-s-1s">0</span>
+      <span class="thebutton-numeral" id="thebutton-s-100ms">0</span>
+      <span class="thebutton-numeral" id="thebutton-s-10ms">0</span>
+    </span>
 
     <div class="thebutton-counter">
       <span class="thebutton-participants">${format_number(thing.num_participants, locale='en')}</span><br />
@@ -150,9 +164,8 @@
 </div>
 
 <% from r2.lib import js %>
-## YES THIS IS SUPER SCARY
 <script type="text/javascript">
-r.config.thebutton_websocket = "${unsafe(thing.websocket_url)}";
+r.config.thebutton_websocket = "${jssafe(thing.websocket_url)}";
 </script>
 
 <script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1.1','packages':['corechart']}]}"></script>

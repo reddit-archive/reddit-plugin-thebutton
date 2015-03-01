@@ -1,6 +1,31 @@
 r.thebutton = {
+
+    _setTimer: function(ms) {
+      var pad = '00000';
+      var msString = (ms > 0 ? ms : 0).toString();
+      var msStringPadded = pad.substring(0, pad.length - msString.length) + msString;
+
+      for(var i=0; i < 4; i++) {
+        r.thebutton._timerTextNodes[i].nodeValue = msStringPadded[i];
+      }
+    },
+
+    _countdown: function() {
+      r.thebutton._setTimer(r.thebutton._msLeft);
+      r.thebutton._msLeft -= 10;
+    },
+
     init: function() {
         this._chart = new google.visualization.PieChart($('.thebutton-pie').get(0));
+        this._msLeft = 0;
+
+        // Direct to the textNode for perf
+        this._timerTextNodes = [
+          $('#thebutton-s-10s').get(0).childNodes[0],
+          $('#thebutton-s-1s').get(0).childNodes[0],
+          $('#thebutton-s-100ms').get(0).childNodes[0],
+          $('#thebutton-s-10ms').get(0).childNodes[0]
+        ];
 
         r.debug("in r.thebutton.init()")
 
@@ -26,6 +51,8 @@ r.thebutton = {
             console.log(response);
           })
         })
+
+        this._countdownInterval = window.setInterval(r.thebutton._countdown, 10);
     },
 
     _drawPie: function(secondsLeft) {
@@ -54,7 +81,8 @@ r.thebutton = {
         var expiredSeconds = message.seconds_elapsed;
         r.debug("timer expired " + expiredSeconds + " ago");
         $('.thebutton-wrap').removeClass('c-hidden').addClass('complete');
-        $('#thebutton-timer').val(0);
+        r.thebutton._countdownInterval = window.clearInterval(r.thebutton._countdownInterval);
+        r.thebutton._setTimer(0);
         r.thebutton._drawPie(0);
     },
 
@@ -71,6 +99,11 @@ r.thebutton = {
         var secondsLeft = message.seconds_left;
         var numParticipants = message.participants_text;
 
+        r.thebutton._msLeft = secondsLeft * 1000;
+        if (!r.thebutton._countdownInterval) {
+          this._countdownInterval = window.setInterval(r.thebutton._countdown, 10);
+        }
+
         r.debug(secondsLeft + " seconds remaining");
         r.debug(numParticipants + " users have pushed the button");
         r.thebutton._drawPie(parseInt(secondsLeft, 10));
@@ -80,4 +113,4 @@ r.thebutton = {
     },
 }
 
-r.thebutton.init()
+r.thebutton.init();
