@@ -148,7 +148,7 @@ def _update_timer():
             namespace="/thebutton", type="ticking",
             payload={
                 "seconds_left": seconds_left,
-                "participants_text": format_number(get_num_participants(), locale=g.locale),
+                "participants_text": format_number(get_num_participants(), locale='en'),
             },
         )
 
