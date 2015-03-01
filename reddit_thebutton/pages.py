@@ -20,7 +20,6 @@ class TheButtonBase(Reddit):
 
 class TheButton(Templated):
     def __init__(self):
-        websocket_url = websockets.make_url("/thebutton", max_age=24 * 60 * 60)
         self.num_participants = get_num_participants()
         self.has_expired = has_timer_expired()
 
@@ -32,4 +31,4 @@ class TheButton(Templated):
             self.too_new = False
             self.has_pressed = False
 
-        Templated.__init__(self, websocket_url=websocket_url)
+        Templated.__init__(self)

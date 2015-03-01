@@ -8,6 +8,11 @@ r.thebutton = {
       for(var i=0; i < 4; i++) {
         r.thebutton._timerTextNodes[i].nodeValue = msStringPadded[i];
       }
+
+      /* Just often enough to feel smooth but not be rendering all the time */
+      if (ms % 100 === 0) {
+        r.thebutton._drawPie(ms, 60000);
+      }
     },
 
     _countdown: function() {
@@ -47,6 +52,8 @@ r.thebutton = {
           e.preventDefault();
           e.stopPropagation();
           var secondsLeft = $('#thebutton-timer').val()
+          r.thebutton._countdownInterval = window.clearInterval(r.thebutton._countdownInterval);
+          r.thebutton._setTimer(99999);
           $.request('press_button', {"seconds": secondsLeft}, function(response) {
             console.log(response);
           })
@@ -55,13 +62,12 @@ r.thebutton = {
         this._countdownInterval = window.setInterval(r.thebutton._countdown, 10);
     },
 
-    _drawPie: function(secondsLeft) {
-      var totalSeconds = 60;
-      var secondsSpent = totalSeconds - secondsLeft;
+    _drawPie: function(msLeft, msTotal) {
+      var msSpent = msTotal - msLeft;
       var data = google.visualization.arrayToDataTable([
         ['', ''],
-        ['gone', secondsSpent],
-        ['remaining', secondsLeft],
+        ['gone', msSpent],
+        ['remaining', msLeft],
       ]);
 
       var options = {
@@ -83,7 +89,6 @@ r.thebutton = {
         $('.thebutton-wrap').removeClass('c-hidden').addClass('complete');
         r.thebutton._countdownInterval = window.clearInterval(r.thebutton._countdownInterval);
         r.thebutton._setTimer(0);
-        r.thebutton._drawPie(0);
     },
 
     _onNotStarted: function(message) {
@@ -106,7 +111,6 @@ r.thebutton = {
 
         r.debug(secondsLeft + " seconds remaining");
         r.debug(numParticipants + " users have pushed the button");
-        r.thebutton._drawPie(parseInt(secondsLeft, 10));
         $('#thebutton-timer').val(parseInt(message.seconds_left, 10));
         $('.thebutton-wrap').removeClass('c-hidden complete');
         $('.thebutton-participants').text(message.participants_text);

@@ -2,7 +2,6 @@ from r2.lib.configparse import ConfigValue
 from r2.lib.js import Module
 from r2.lib.plugin import Plugin
 
-
 class TheButton(Plugin):
     needs_static_build = True
 
@@ -58,10 +57,13 @@ class TheButton(Plugin):
         )
 
     def load_controllers(self):
+        from r2.lib.pages import Reddit
         from reddit_thebutton.controllers import (
             ButtonApiController,
             ButtonController,
         )
+
+        Reddit.extra_stylesheets.append('thebutton.less')
 
         from reddit_thebutton.hooks import hooks
         hooks.register_all()

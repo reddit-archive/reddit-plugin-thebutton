@@ -1,0 +1,124 @@
+.thebutton-wrap {
+    text-align: center;
+
+    h1 {
+        float: left;
+        line-height: 60px;
+        margin: 0;
+        font-size: 24px;
+        padding: 0 25px 0 10px;
+    }
+
+    label {
+        float: left;
+        line-height: 60px;
+        font-size: 30px;
+
+        &:before {
+            content: "☛";
+        }
+    }
+
+    &.complete {
+        #thebutton {
+            background: rgba(121, 120, 120, 0.40);
+            box-shadow: inset 0px 1px 0px 0px rgba(0, 0, 0, 0.10);
+            cursor: not-allowed;
+        }
+
+        label:before {
+            content: "✓";
+        }
+    }
+}
+
+.thebutton-form {
+    background: #FAFAFA;
+    background-image: radial-gradient(50% 125%, #FFFFFF 25%, rgba(255, 255, 255, 0.00) 100%);
+    border: 1px solid #999999;
+    overflow: hidden;
+    font-family: Georgia;
+    color: #4A4A4A;
+    height: 80px;
+    display: inline-block;
+    padding-right: 70px;
+    padding-left: 15px;
+    margin: 10px auto;
+}
+
+#thebutton {
+    float: left;
+    margin-top: 15px;
+    margin-left: 15px;
+    width: 100px;
+    height: 30px;
+    line-height: 60px;
+    font-size: 1px;
+    text-indent: -999999px;
+    background: #999999;
+    background-image: linear-gradient(-180deg, rgba(255, 255, 255, 0.02) 0%, rgba(0, 0, 0, 0.02) 100%);
+    box-shadow: 0px 2px 0px 0px #666666;
+    border-radius: 4px;
+    border: none;
+    outline: none;
+
+    &:active {
+        background: #808080;
+        background-image: linear-gradient(-180deg, rgba(255, 255, 255, 0.02) 0%, rgba(0, 0, 0, 0.02) 100%);
+        box-shadow: inset 0px 1px 0px 0px rgba(0, 0, 0, 0.20);
+    }
+}
+
+.thebutton-pie {
+    float: left;
+    display: inline-block;
+    width: 80px;
+    height: 60px;
+    line-height: 60px;
+    margin-left: 15px;
+    text-align: center;
+}
+
+#thebutton-timer {
+    float: left;
+    min-width: 60px;
+    line-height: 60px;
+    display: inline;
+    max-width: 100px;
+}
+
+.thebutton-numeral {
+    font-family: monospace;
+    font-weight: bold;
+    border: 1px solid rgba(73, 73, 73, 0.40);
+    font-size: 28px;
+    margin: 1px;
+    padding: 3px 2px;
+}
+
+.thebutton-counter {
+    float: left;
+    line-height: 1.4;
+    vertical-align: middle;
+    height: 30px;
+    margin-top: 15px;   /* hax */
+    margin-left: 15px;
+    text-align: left;
+}
+
+.thebutton-counter span {
+    line-height: 1;
+}
+
+.thebutton-participants {
+    font-size: 12px;
+}
+
+.thebutton-participants-description {
+    font-size: 12px;
+    color: #737373;
+}
+
+#thebutton-s-10ms, #thebutton-s-100ms {
+    color: #999999;
+}
