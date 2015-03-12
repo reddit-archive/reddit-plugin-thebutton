@@ -117,14 +117,15 @@ def _update_timer():
         seconds_elapsed = (now - expiration_time).total_seconds
 
         websockets.send_broadcast(
-            namespace="/thebutton/", type="expired", payload={"seconds_elapsed": seconds_elapsed})
+            namespace="/thebutton", type="expired",
+            payload={"seconds_elapsed": seconds_elapsed})
         return
 
     current_press = get_current_press()
     if not current_press:
         # timer hasn't started
         websockets.send_broadcast(
-            namespace="/thebutton/", type="not_started", payload={})
+            namespace="/thebutton", type="not_started", payload={})
         return
 
     now = datetime.now(g.tz)
@@ -134,10 +135,12 @@ def _update_timer():
     if seconds_left < 0:
         mark_timer_expired(now)
         websockets.send_broadcast(
-            namespace="/thebutton/", type="just_expired", payload={})
+            namespace="/thebutton", type="just_expired", payload={})
     else:
+        # TODO: don't update the timer, depend on the frontend to manage it
         websockets.send_broadcast(
-            namespace="/thebutton/", type="ticking", payload={"seconds_left": seconds_left})
+            namespace="/thebutton", type="ticking",
+            payload={"seconds_left": seconds_left})
 
 
 def update_timer():

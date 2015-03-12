@@ -1,4 +1,6 @@
+from r2.controllers import add_controller
 from r2.controllers.api import ApiController
+from r2.controllers.reddit_base import RedditController
 from r2.lib.validator import (
     validate,
     VModhash,
@@ -15,8 +17,14 @@ from reddit_thebutton.models import (
     set_current_press,
 )
 
+from reddit_thebutton.pages import (
+    TheButtonBase,
+    TheButton,
+)
 
-class ButtonController(ApiController):
+
+@add_controller
+class ButtonApiController(ApiController):
     @validate(
         VUser(),
         VModhash(),
@@ -48,3 +56,9 @@ class ButtonController(ApiController):
         setattr(c.user, 'flair_%s_css_class' % g.thebutton_srid, flair_css)
         c.user._commit()
 
+
+@add_controller
+class ButtonController(RedditController):
+    def GET_button(self):
+        content = TheButton()
+        return TheButtonBase(content=content).render()

@@ -1,8 +1,11 @@
 from r2.lib.configparse import ConfigValue
+from r2.lib.js import Module
 from r2.lib.plugin import Plugin
 
 
 class TheButton(Plugin):
+    needs_static_build = True
+
     config = {
         ConfigValue.tuple: [
             "thebutton_caches",
@@ -16,6 +19,14 @@ class TheButton(Plugin):
         ConfigValue.str: [
             "thebutton_id",
         ],
+    }
+
+    js = {
+        "thebutton": Module("thebutton.js",
+            "websocket.js",
+
+            "thebutton.js",
+        )
     }
 
     def on_load(self, g):
@@ -36,9 +47,18 @@ class TheButton(Plugin):
     def add_routes(self, mc):
         mc(
             "/api/press_button",
-            controller="button",
+            controller="buttonapi",
             action="press_button",
         )
 
+        mc(
+            "/thebutton",
+            controller="button",
+            action="button",
+        )
+
     def load_controllers(self):
-        from reddit_thebutton.controllers import ButtonController
+        from reddit_thebutton.controllers import (
+            ButtonApiController,
+            ButtonController,
+        )
