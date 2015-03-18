@@ -32,7 +32,7 @@ class ButtonApiController(ApiController):
         VModhash(),
     )
     def POST_press_button(self):
-        if ButtonPressByUser.has_pressed(c.user) and not (c.user_is_loggedin and c.user.employee):
+        if ButtonPressByUser.has_pressed(c.user) and not c.user.employee:
             return
 
         if has_timer_expired():
