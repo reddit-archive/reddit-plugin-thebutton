@@ -115,6 +115,7 @@ def _update_timer():
     if expiration_time:
         now = datetime.now(g.tz)
         seconds_elapsed = (now - expiration_time).total_seconds()
+        g.log.debug("%s: timer is expired %s ago" % (now, seconds_elapsed))
 
         websockets.send_broadcast(
             namespace="/thebutton", type="expired",
@@ -124,6 +125,7 @@ def _update_timer():
     current_press = get_current_press()
     if not current_press:
         # timer hasn't started
+        g.log.debug("%s: timer not started" % datetime.now(g.tz))
         websockets.send_broadcast(
             namespace="/thebutton", type="not_started", payload={})
         return
@@ -133,11 +135,13 @@ def _update_timer():
     seconds_left = (EXPIRATION_TIME - time_elapsed).total_seconds()
 
     if seconds_left < 0:
+        g.log.debug("%s: timer just expired" % now)
         mark_timer_expired(now)
         websockets.send_broadcast(
             namespace="/thebutton", type="just_expired", payload={})
     else:
         # TODO: don't update the timer, depend on the frontend to manage it
+        g.log.debug("%s: timer is ticking %s" % (now, seconds_left))
         websockets.send_broadcast(
             namespace="/thebutton", type="ticking",
             payload={"seconds_left": seconds_left})
