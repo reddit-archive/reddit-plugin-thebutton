@@ -19,7 +19,8 @@ r.thebutton = {
         $('#thebutton').on('click', function(e) {
           e.preventDefault();
           e.stopPropagation();
-          $.request('press_button', {"eschaton": "immanentized"}, function(response) {
+          var secondsLeft = $('#thebutton-timer').val()
+          $.request('press_button', {"seconds": secondsLeft}, function(response) {
             console.log(response);
           })
         })
