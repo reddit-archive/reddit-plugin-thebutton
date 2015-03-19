@@ -5,6 +5,7 @@ from r2.controllers.api import ApiController
 from r2.controllers.reddit_base import RedditController
 from r2.lib.validator import (
     validate,
+    VInt,
     VModhash,
     VUser,
 )
@@ -30,8 +31,9 @@ class ButtonApiController(ApiController):
     @validate(
         VUser(),
         VModhash(),
+        client_seconds_remaining=VInt('seconds', min=0, max=60),
     )
-    def POST_press_button(self):
+    def POST_press_button(self, client_seconds_remaining):
         if ButtonPressByUser.has_pressed(c.user) and not c.user.employee:
             return
 
@@ -46,7 +48,9 @@ class ButtonApiController(ApiController):
 
         # should time elapsed be tracked somewhere?
         flair_text = str(press_time)
-        if previous_press_time:
+        if previous_press_time and client_seconds_remaining is not None:
+            flair_css = "%s-seconds" % client_seconds_remaining
+        elif previous_press_time:
             time_elapsed_at_press = (press_time - previous_press_time)
             time_remaining_at_press = EXPIRATION_TIME - time_elapsed_at_press
             seconds_remaining = max(0, int(time_remaining_at_press.total_seconds()))
