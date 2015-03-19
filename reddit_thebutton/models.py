@@ -132,7 +132,7 @@ def _update_timer():
 
     now = datetime.now(g.tz)
     time_elapsed = now - current_press
-    seconds_left = (EXPIRATION_TIME - time_elapsed).total_seconds()
+    seconds_left = round((EXPIRATION_TIME - time_elapsed).total_seconds())
 
     if seconds_left < 0:
         g.log.debug("%s: timer just expired" % now)
