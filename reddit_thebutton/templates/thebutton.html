@@ -126,6 +126,11 @@
 
 </style>
 
+<%!
+    from babel.numbers import format_number
+    from pylons import g
+%>
+
 <div class="thebutton-wrap c-hidden">
   <form class="thebutton-form">
     <h1>the button</h1>
@@ -138,7 +143,7 @@
     <input type="number" readonly id="thebutton-timer" value="60">
 
     <div class="thebutton-counter">
-      <span class="thebutton-participants">17,349</span><br />
+      <span class="thebutton-participants">${format_number(thing.num_participants, locale=g.locale)}</span><br />
       <span class="thebutton-participants-description">&#32;participants</span>
     </div>
   </form>

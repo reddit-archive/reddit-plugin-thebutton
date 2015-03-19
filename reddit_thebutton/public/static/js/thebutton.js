@@ -69,10 +69,14 @@ r.thebutton = {
 
     _onTicking: function(message) {
         var secondsLeft = message.seconds_left;
+        var numParticipants = message.participants_text;
+
         r.debug(secondsLeft + " seconds remaining");
+        r.debug(numParticipants + " users have pushed the button");
+        r.thebutton._drawPie(parseInt(secondsLeft, 10));
         $('#thebutton-timer').val(parseInt(message.seconds_left, 10));
         $('.thebutton-wrap').removeClass('c-hidden complete');
-        r.thebutton._drawPie(parseInt(secondsLeft, 10));
+        $('.thebutton-participants').text(message.participants_text);
     },
 }
 
