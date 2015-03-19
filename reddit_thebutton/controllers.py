@@ -50,9 +50,9 @@ class ButtonApiController(ApiController):
             time_elapsed_at_press = (press_time - previous_press_time)
             time_remaining_at_press = EXPIRATION_TIME - time_elapsed_at_press
             seconds_remaining = max(0, int(time_remaining_at_press.total_seconds()))
-            flair_css = str(seconds_remaining)
+            flair_css = "%s-seconds" % seconds_remaining
         else:
-            flair_css = "first press"
+            flair_css = "first-press"
 
         setattr(c.user, 'flair_%s_text' % g.thebutton_srid, flair_text)
         setattr(c.user, 'flair_%s_css_class' % g.thebutton_srid, flair_css)
