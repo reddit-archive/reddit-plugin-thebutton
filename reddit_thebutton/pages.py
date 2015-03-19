@@ -1,6 +1,7 @@
 from r2.lib import websockets
 from r2.lib.pages import Reddit
 from r2.lib.wrapped import Templated
+from reddit_thebutton.models import get_num_participants
 
 
 class TheButtonBase(Reddit):
@@ -13,4 +14,5 @@ class TheButtonBase(Reddit):
 class TheButton(Templated):
     def __init__(self):
         websocket_url = websockets.make_url("/thebutton", max_age=24 * 60 * 60)
+        self.num_participants = get_num_participants()
         Templated.__init__(self, websocket_url=websocket_url)

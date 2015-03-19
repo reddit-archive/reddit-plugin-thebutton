@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from time import sleep
 from uuid import uuid1, UUID
 
+from babel.numbers import format_number
 from pycassa.cassandra.ttypes import NotFoundException
 from pycassa.system_manager import TIME_UUID_TYPE
 from pycassa.util import convert_uuid_to_time
@@ -14,6 +15,7 @@ from r2.models.keyvalue import NamedGlobals
 
 TIME_EXPIRED_KEY = "THE_BUTTON_TIME_EXPIRED"
 CURRENT_PRESS_KEY = "THE_BUTTON_CURRENT_PRESS"
+PARTICIPANTS_KEY = "THE_BUTTON_PARTICIPANTS"
 EXPIRATION_TIME = timedelta(seconds=60)
 UPDATE_INTERVAL = timedelta(seconds=1)
 
@@ -144,7 +146,11 @@ def _update_timer():
         g.log.debug("%s: timer is ticking %s" % (now, seconds_left))
         websockets.send_broadcast(
             namespace="/thebutton", type="ticking",
-            payload={"seconds_left": seconds_left})
+            payload={
+                "seconds_left": seconds_left,
+                "participants_text": format_number(get_num_participants(), locale=g.locale),
+            },
+        )
 
 
 def update_timer():
@@ -210,11 +216,16 @@ def get_current_press():
         return _deserialize_datetime(val)
 
 
+def get_num_participants():
+    return g.thebuttoncache.get(PARTICIPANTS_KEY) or 0
+
+
 def set_current_press(press_time):
     key = _CURRENT_PRESS_KEY()
     serialized = _serialize_datetime(press_time)
     NamedGlobals.set(key, serialized)
     g.thebuttoncache.set(key, serialized)
+    g.thebuttoncache.incr(PARTICIPANTS_KEY)
 
 
 def reset_button():
@@ -225,3 +236,6 @@ def reset_button():
     g.thebuttoncache.delete(expired_key)
     NamedGlobals._cf.remove(press_key)
     g.thebuttoncache.delete(press_key)
+
+    g.thebuttoncache.set(PARTICIPANTS_KEY, 0)
+
