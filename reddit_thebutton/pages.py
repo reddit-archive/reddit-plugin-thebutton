@@ -1,7 +1,12 @@
+from pylons import c
+
 from r2.lib import websockets
 from r2.lib.pages import Reddit
 from r2.lib.wrapped import Templated
-from reddit_thebutton.models import get_num_participants
+from reddit_thebutton.models import (
+    ACCOUNT_CREATION_CUTOFF,
+    get_num_participants,
+)
 
 
 class TheButtonBase(Reddit):
@@ -15,4 +20,7 @@ class TheButton(Templated):
     def __init__(self):
         websocket_url = websockets.make_url("/thebutton", max_age=24 * 60 * 60)
         self.num_participants = get_num_participants()
+        too_new = c.user_is_loggedin and c.user._date > ACCOUNT_CREATION_CUTOFF
+        self.too_new = too_new
+
         Templated.__init__(self, websocket_url=websocket_url)
