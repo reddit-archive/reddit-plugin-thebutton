@@ -10,6 +10,7 @@ from pylons import g
 
 from r2.lib import websockets
 from r2.lib.db import tdb_cassandra
+from r2.models import Account
 from r2.models.keyvalue import NamedGlobals
 
 
@@ -248,3 +249,29 @@ def reset_button():
 
     g.thebuttoncache.set(PARTICIPANTS_KEY, 0)
 
+
+def _delete_button_flair(user_id36s):
+    users = Account._byID36(user_id36s, data=True, return_dict=False)
+    for user in users:
+        g.log.debug("deleting flair for %s" % user.name)
+        setattr(user, 'flair_%s_text' % g.thebutton_srid, None)
+        setattr(user, 'flair_%s_css_class' % g.thebutton_srid, None)
+        user._commit()
+
+
+def nuclear_reset():
+    user_id36s = set()
+    CHUNK_SIZE = 100
+    for rowkey, columns in ButtonPressByUser._cf.get_range():
+        button_id, user_id36 = rowkey.split('.')
+        user_id36s.add(user_id36)
+
+        if len(user_id36s) >= CHUNK_SIZE:
+            _delete_button_flair(user_id36s)
+            user_id36s = set()
+
+    if user_id36s:
+        _delete_button_flair(user_id36s)
+
+    ButtonPressByUser._cf.truncate()
+    reset_button()
