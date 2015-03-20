@@ -5,7 +5,9 @@ from r2.lib.pages import Reddit
 from r2.lib.wrapped import Templated
 from reddit_thebutton.models import (
     ACCOUNT_CREATION_CUTOFF,
+    ButtonPressByUser,
     get_num_participants,
+    has_timer_expired,
 )
 
 
@@ -20,7 +22,14 @@ class TheButton(Templated):
     def __init__(self):
         websocket_url = websockets.make_url("/thebutton", max_age=24 * 60 * 60)
         self.num_participants = get_num_participants()
-        too_new = c.user_is_loggedin and c.user._date > ACCOUNT_CREATION_CUTOFF
-        self.too_new = too_new
+        self.has_expired = has_timer_expired()
+
+        if c.user_is_loggedin:
+            self.too_new = c.user._date > ACCOUNT_CREATION_CUTOFF
+            self.has_pressed = (ButtonPressByUser.has_pressed(c.user) and
+                not c.user.employee)
+        else:
+            self.too_new = False
+            self.has_pressed = False
 
         Templated.__init__(self, websocket_url=websocket_url)
