@@ -17,7 +17,8 @@ TIME_EXPIRED_KEY = "THE_BUTTON_TIME_EXPIRED"
 CURRENT_PRESS_KEY = "THE_BUTTON_CURRENT_PRESS"
 PARTICIPANTS_KEY = "THE_BUTTON_PARTICIPANTS"
 EXPIRATION_TIME = timedelta(seconds=60)
-UPDATE_INTERVAL = timedelta(seconds=1)
+EXPIRATION_FUDGE_SECONDS = 2
+UPDATE_INTERVAL_SECONDS = 1
 ACCOUNT_CREATION_CUTOFF = datetime(2015, 4, 1, 0, 0, tzinfo=g.tz)
 
 
@@ -116,35 +117,23 @@ class ButtonPressByUser(tdb_cassandra.View):
 def _update_timer():
     expiration_time = has_timer_expired()
     if expiration_time:
-        now = datetime.now(g.tz)
-        seconds_elapsed = (now - expiration_time).total_seconds()
-        g.log.debug("%s: timer is expired %s ago" % (now, seconds_elapsed))
+        seconds_elapsed = (datetime.now(g.tz) - expiration_time).total_seconds()
+        g.log.debug("%s: timer is expired %s ago" % (datetime.now(g.tz), seconds_elapsed))
 
         websockets.send_broadcast(
             namespace="/thebutton", type="expired",
             payload={"seconds_elapsed": seconds_elapsed})
         return
 
-    current_press = get_current_press()
-    if not current_press:
-        # timer hasn't started
-        g.log.debug("%s: timer not started" % datetime.now(g.tz))
-        websockets.send_broadcast(
-            namespace="/thebutton", type="not_started", payload={})
-        return
-
-    now = datetime.now(g.tz)
-    time_elapsed = now - current_press
-    seconds_left = round((EXPIRATION_TIME - time_elapsed).total_seconds())
-
+    seconds_left = round(get_seconds_left())
     if seconds_left < 0:
-        g.log.debug("%s: timer just expired" % now)
-        mark_timer_expired(now)
+        g.log.debug("%s: timer just expired" % datetime.now(g.tz))
+        mark_timer_expired(datetime.now(g.tz))
         websockets.send_broadcast(
             namespace="/thebutton", type="just_expired", payload={})
     else:
         # TODO: don't update the timer, depend on the frontend to manage it
-        g.log.debug("%s: timer is ticking %s" % (now, seconds_left))
+        g.log.debug("%s: timer is ticking %s" % (datetime.now(g.tz), seconds_left))
         websockets.send_broadcast(
             namespace="/thebutton", type="ticking",
             payload={
@@ -158,7 +147,7 @@ def update_timer():
     while True:
         g.reset_caches()
         _update_timer()
-        sleep(UPDATE_INTERVAL.total_seconds())
+        sleep(UPDATE_INTERVAL_SECONDS)
 
 
 def has_timer_expired():
@@ -187,6 +176,25 @@ def mark_timer_expired(expiration_time):
     serialized = _serialize_datetime(expiration_time)
     NamedGlobals.set(key, serialized)
     g.thebuttoncache.set(key, serialized)
+
+
+def get_seconds_left():
+    current_press = get_current_press()
+    if not current_press:
+        return EXPIRATION_TIME.total_seconds()
+
+    now = datetime.now(g.tz)
+    time_elapsed = now - current_press
+    seconds_left = (EXPIRATION_TIME - time_elapsed).total_seconds()
+
+    # fudge the time a little
+    if seconds_left <= 0:
+        if (seconds_left + EXPIRATION_FUDGE_SECONDS) > 0:
+            # return a time that isn't expired: 0 seconds isn't expired--less
+            # than 0 is
+            return 0.
+
+    return seconds_left
 
 
 def _serialize_datetime(dt):
