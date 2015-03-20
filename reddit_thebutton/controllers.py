@@ -15,8 +15,8 @@ from reddit_thebutton.models import (
     ACCOUNT_CREATION_CUTOFF,
     ButtonPressesByDate,
     ButtonPressByUser,
-    EXPIRATION_TIME,
     get_current_press,
+    get_seconds_left,
     has_timer_expired,
     set_current_press,
 )
@@ -50,17 +50,33 @@ class ButtonApiController(ApiController):
         ButtonPressByUser.pressed(c.user, press_time)
         set_current_press(press_time)
 
-        # should time elapsed be tracked somewhere?
-        flair_text = str(press_time)
-        if previous_press_time and client_seconds_remaining is not None:
-            flair_css = "%s-seconds" % client_seconds_remaining
-        elif previous_press_time:
-            time_elapsed_at_press = (press_time - previous_press_time)
-            time_remaining_at_press = EXPIRATION_TIME - time_elapsed_at_press
-            seconds_remaining = max(0, int(time_remaining_at_press.total_seconds()))
-            flair_css = "%s-seconds" % seconds_remaining
+        # don't flair employees
+        if c.user.employee:
+            return
+
+        # don't flair on first press (the starter)
+        if not previous_press_time:
+            return
+
+        if client_seconds_remaining is None:
+            seconds_remaining = max(0, int(get_seconds_left()))
         else:
-            flair_css = "first-press"
+            seconds_remaining = client_seconds_remaining
+
+        if seconds_remaining > 51:
+            flair_css = "press-6"
+        elif seconds_remaining > 41:
+            flair_css = "press-5"
+        elif seconds_remaining > 31:
+            flair_css = "press-4"
+        elif seconds_remaining > 21:
+            flair_css = "press-3"
+        elif seconds_remaining > 11:
+            flair_css = "press-2"
+        else:
+            flair_css = "press-1"
+
+        flair_text = "%ss" % seconds_remaining
 
         setattr(c.user, 'flair_%s_text' % g.thebutton_srid, flair_text)
         setattr(c.user, 'flair_%s_css_class' % g.thebutton_srid, flair_css)
