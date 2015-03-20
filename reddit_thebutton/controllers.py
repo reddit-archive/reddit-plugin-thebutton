@@ -12,6 +12,7 @@ from r2.lib.validator import (
 from r2.models.keyvalue import NamedGlobals
 
 from reddit_thebutton.models import (
+    ACCOUNT_CREATION_CUTOFF,
     ButtonPressesByDate,
     ButtonPressByUser,
     EXPIRATION_TIME,
@@ -34,6 +35,9 @@ class ButtonApiController(ApiController):
         client_seconds_remaining=VInt('seconds', min=0, max=60),
     )
     def POST_press_button(self, client_seconds_remaining):
+        if c.user._date > ACCOUNT_CREATION_CUTOFF:
+            return
+
         if ButtonPressByUser.has_pressed(c.user) and not c.user.employee:
             return
 
