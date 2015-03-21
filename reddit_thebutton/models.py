@@ -1,11 +1,8 @@
 from datetime import datetime, timedelta
 from time import sleep
-from uuid import uuid1, UUID
 
 from babel.numbers import format_number
 from pycassa.cassandra.ttypes import NotFoundException
-from pycassa.system_manager import TIME_UUID_TYPE
-from pycassa.util import convert_uuid_to_time
 from pylons import g
 
 from r2.lib import websockets
@@ -29,57 +26,6 @@ def _EXPIRED_KEY():
 
 def _CURRENT_PRESS_KEY():
     return "%s.%s" % (g.live_config["thebutton_id"], CURRENT_PRESS_KEY)
-
-
-class ButtonPressesByDate(tdb_cassandra.View):
-    _use_db = True
-    _connection_pool = 'main'
-    _compare_with = TIME_UUID_TYPE
-    _extra_schema_creation_args = {
-        "key_validation_class": tdb_cassandra.ASCII_TYPE,
-    }
-    _write_consistency_level = tdb_cassandra.CL.ONE
-    _read_consistency_level = tdb_cassandra.CL.ONE
-
-    """
-    Track all button presses. TimeUUID for column names, Account._id36 for
-    column value. rowkey based on date buckets.
-    """
-
-    @classmethod
-    def _rowkey(cls, dt):
-        # use a new row every 5 minutes
-        minute_bucket = dt.minute / 5 * 5 # 12 values per hour: 0, 5, 10, ...
-        time_pieces = (dt.year, dt.month, dt.day, dt.hour, minute_bucket)
-        time_part = "%04d-%02d-%02d-%02d-%02d" % time_pieces
-        return "%s.%s" % (g.live_config["thebutton_id"], time_part)
-
-    @classmethod
-    def press(cls, user):
-        u = uuid1()
-        timestamp = convert_uuid_to_time(u)
-        dt = datetime.fromtimestamp(timestamp, tz=g.tz)
-        rowkey = cls._rowkey(dt)
-        column = {u: user._id36}
-        cls._cf.insert(rowkey, column,
-            write_consistency_level=cls._write_consistency_level)
-        return dt
-
-    @classmethod
-    def get_recent_press(cls):
-        now = datetime.now(g.tz)
-        rowkeys = [cls._rowkey(now + timedelta(minutes=i)) for i in (0, 5, 10)]
-        columns_by_row = cls._cf.multiget(rowkeys, column_count=1,
-            column_reversed=True,
-            read_consistency_level=cls._read_consistency_level)
-
-        dts = []
-        for rowkey, column in columns_by_row.iteritems():
-            dt = column.values()[0]
-            dts.append(dt)
-
-        if dts:
-            return max(dts)
 
 
 class ButtonPressByUser(tdb_cassandra.View):
@@ -113,6 +59,12 @@ class ButtonPressByUser(tdb_cassandra.View):
             return False
         else:
             return True
+
+
+def press_button(user):
+    press_time = datetime.now(g.tz)
+    ButtonPressByUser.pressed(user, press_time)
+    set_current_press(press_time)
 
 
 def _update_timer():
