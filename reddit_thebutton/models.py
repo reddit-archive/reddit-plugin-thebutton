@@ -126,6 +126,12 @@ def _update_timer():
             payload={"seconds_elapsed": seconds_elapsed})
         return
 
+    if not has_timer_started():
+        g.log.debug("%s: timer not started" % datetime.now(g.tz))
+        websockets.send_broadcast(
+            namespace="/thebutton", type="not_started", payload={})
+        return
+
     seconds_left = round(get_seconds_left())
     if seconds_left < 0:
         g.log.debug("%s: timer just expired" % datetime.now(g.tz))
@@ -177,6 +183,10 @@ def mark_timer_expired(expiration_time):
     serialized = _serialize_datetime(expiration_time)
     NamedGlobals.set(key, serialized)
     g.thebuttoncache.set(key, serialized)
+
+
+def has_timer_started():
+    return get_current_press() is not None
 
 
 def get_seconds_left():
