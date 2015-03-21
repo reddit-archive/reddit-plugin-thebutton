@@ -18,6 +18,7 @@ from reddit_thebutton.models import (
     get_current_press,
     get_seconds_left,
     has_timer_expired,
+    has_timer_started,
     set_current_press,
 )
 
@@ -43,6 +44,10 @@ class ButtonApiController(ApiController):
 
         if has_timer_expired():
             # time has expired: no longer possible to press the button
+            return
+
+        if not has_timer_started() and not c.user.employee:
+            # only employees can make the first press
             return
 
         previous_press_time = get_current_press()
