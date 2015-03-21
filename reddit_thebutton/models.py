@@ -21,11 +21,11 @@ ACCOUNT_CREATION_CUTOFF = datetime(2015, 4, 1, 0, 0, tzinfo=g.tz)
 
 
 def _EXPIRED_KEY():
-    return "%s.%s" % (g.live_config["thebutton_id"], TIME_EXPIRED_KEY)
+    return "%s.%s" % (g.live_config["thebutton_srid"], TIME_EXPIRED_KEY)
 
 
 def _CURRENT_PRESS_KEY():
-    return "%s.%s" % (g.live_config["thebutton_id"], CURRENT_PRESS_KEY)
+    return "%s.%s" % (g.live_config["thebutton_srid"], CURRENT_PRESS_KEY)
 
 
 class ButtonPressByUser(tdb_cassandra.View):
@@ -40,7 +40,7 @@ class ButtonPressByUser(tdb_cassandra.View):
 
     @classmethod
     def _rowkey(cls, user):
-        return "%s.%s" % (g.live_config["thebutton_id"], user._id36)
+        return "%s.%s" % (g.live_config["thebutton_srid"], user._id36)
 
     @classmethod
     def pressed(cls, user, dt):
@@ -216,8 +216,8 @@ def _delete_button_flair(user_id36s):
     users = Account._byID36(user_id36s, data=True, return_dict=False)
     for user in users:
         g.log.debug("deleting flair for %s" % user.name)
-        setattr(user, 'flair_%s_text' % g.thebutton_srid, None)
-        setattr(user, 'flair_%s_css_class' % g.thebutton_srid, None)
+        setattr(user, 'flair_%s_text' % g.live_config["thebutton_srid"], None)
+        setattr(user, 'flair_%s_css_class' % g.live_config["thebutton_srid"], None)
         user._commit()
 
 
