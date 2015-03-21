@@ -50,6 +50,11 @@ class ButtonApiController(ApiController):
             # only employees can make the first press
             return
 
+        if client_seconds_remaining is None:
+            seconds_remaining = max(0, int(get_seconds_left()))
+        else:
+            seconds_remaining = client_seconds_remaining
+
         press_button(c.user)
 
         # don't flair employees
@@ -59,11 +64,6 @@ class ButtonApiController(ApiController):
         # don't flair on first press (the starter)
         if not has_started:
             return
-
-        if client_seconds_remaining is None:
-            seconds_remaining = max(0, int(get_seconds_left()))
-        else:
-            seconds_remaining = client_seconds_remaining
 
         if seconds_remaining > 51:
             flair_css = "press-6"
