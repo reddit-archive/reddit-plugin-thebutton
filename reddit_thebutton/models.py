@@ -28,6 +28,9 @@ def _CURRENT_PRESS_KEY():
     return "%s.%s" % (g.live_config["thebutton_srid"], CURRENT_PRESS_KEY)
 
 
+def _PARTICIPANTS_KEY():
+    return "%s.%s" % (g.live_config["thebutton_srid"], PARTICIPANTS_KEY)
+
 class ButtonPressByUser(tdb_cassandra.View):
     _use_db = True
     _connection_pool = 'main'
@@ -195,7 +198,7 @@ def get_current_press():
 
 
 def get_num_participants():
-    return g.thebuttoncache.get(PARTICIPANTS_KEY) or 0
+    return g.thebuttoncache.get(_PARTICIPANTS_KEY()) or 0
 
 
 def set_current_press(press_time):
@@ -203,7 +206,7 @@ def set_current_press(press_time):
     serialized = _serialize_datetime(press_time)
     NamedGlobals.set(key, serialized)
     g.thebuttoncache.set(key, serialized)
-    g.thebuttoncache.incr(PARTICIPANTS_KEY)
+    g.thebuttoncache.incr(_PARTICIPANTS_KEY())
 
 
 def reset_button():
@@ -215,7 +218,7 @@ def reset_button():
     NamedGlobals._cf.remove(press_key)
     g.thebuttoncache.delete(press_key)
 
-    g.thebuttoncache.set(PARTICIPANTS_KEY, 0)
+    g.thebuttoncache.set(_PARTICIPANTS_KEY(), 0)
 
 
 def _delete_button_flair(user_id36s):
