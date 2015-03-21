@@ -34,6 +34,7 @@ class TheButton(Plugin):
         thebutton_memcaches = CMemcache(
             'thebutton',
             g.thebutton_caches,
+            min_compress_len=1400,
             num_clients=g.num_mc_clients,
         )
         localcache_cls = (SelfEmptyingCache if g.running_as_script else LocalCache)
