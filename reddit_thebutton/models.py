@@ -209,15 +209,30 @@ def set_current_press(press_time):
     g.thebuttoncache.incr(_PARTICIPANTS_KEY())
 
 
-def reset_button():
-    expired_key = _EXPIRED_KEY()
-    press_key = _CURRENT_PRESS_KEY()
+def reset_presses():
+    user_id36s = set()
+    CHUNK_SIZE = 100
 
-    NamedGlobals._cf.remove(expired_key)
-    g.thebuttoncache.delete(expired_key)
-    NamedGlobals._cf.remove(press_key)
-    g.thebuttoncache.delete(press_key)
+    cf_mutator = ButtonPressByUser._cf.batch()
 
+    for rowkey, columns in ButtonPressByUser._cf.get_range():
+        thebutton_srid, user_id36 = rowkey.split('.')
+        user_id36s.add(user_id36)
+
+        # delete the user's flair
+        if len(user_id36s) >= CHUNK_SIZE:
+            _delete_button_flair(user_id36s)
+            user_id36s = set()
+
+        # delete the entry in ButtonPressByUser
+        cf_mutator.remove(rowkey)
+
+    if user_id36s:
+        _delete_button_flair(user_id36s)
+
+    cf_mutator.send()
+
+    # set participants to 0
     g.thebuttoncache.set(_PARTICIPANTS_KEY(), 0)
 
 
@@ -230,19 +245,16 @@ def _delete_button_flair(user_id36s):
         user._commit()
 
 
-def nuclear_reset():
-    user_id36s = set()
-    CHUNK_SIZE = 100
-    for rowkey, columns in ButtonPressByUser._cf.get_range():
-        button_id, user_id36 = rowkey.split('.')
-        user_id36s.add(user_id36)
+def reset_timer():
+    expired_key = _EXPIRED_KEY()
+    press_key = _CURRENT_PRESS_KEY()
 
-        if len(user_id36s) >= CHUNK_SIZE:
-            _delete_button_flair(user_id36s)
-            user_id36s = set()
+    NamedGlobals._cf.remove(expired_key)
+    g.thebuttoncache.delete(expired_key)
+    NamedGlobals._cf.remove(press_key)
+    g.thebuttoncache.delete(press_key)
 
-    if user_id36s:
-        _delete_button_flair(user_id36s)
 
-    ButtonPressByUser._cf.truncate()
-    reset_button()
+def reset_button():
+    reset_presses()
+    reset_timer()
