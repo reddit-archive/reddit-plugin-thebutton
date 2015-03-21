@@ -34,6 +34,9 @@ class ButtonApiController(ApiController):
         client_seconds_remaining=VInt('seconds', min=0, max=60),
     )
     def POST_press_button(self, client_seconds_remaining):
+        if not g.live_config['thebutton_is_active']:
+            return
+
         if c.user._date > ACCOUNT_CREATION_CUTOFF:
             return
 

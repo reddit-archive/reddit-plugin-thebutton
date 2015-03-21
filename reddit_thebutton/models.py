@@ -68,6 +68,12 @@ def press_button(user):
 
 
 def _update_timer():
+    if not g.live_config['thebutton_is_active']:
+        g.log.debug("%s: thebutton is inactive" % datetime.now(g.tz))
+        websockets.send_broadcast(
+            namespace="/thebutton", type="not_started", payload={})
+        return
+
     expiration_time = has_timer_expired()
     if expiration_time:
         seconds_elapsed = (datetime.now(g.tz) - expiration_time).total_seconds()

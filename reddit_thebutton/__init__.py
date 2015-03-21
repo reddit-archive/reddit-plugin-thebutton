@@ -15,6 +15,9 @@ class TheButton(Plugin):
         ConfigValue.int: [
             "thebutton_srid",
         ],
+        ConfigValue.bool: [
+            "thebutton_is_active",
+        ],
     }
 
     js = {
