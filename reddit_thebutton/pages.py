@@ -1,4 +1,4 @@
-from pylons import c
+from pylons import c, g
 
 from r2.lib import websockets
 from r2.lib.pages import Reddit
@@ -20,6 +20,7 @@ class TheButtonBase(Reddit):
 
 class TheButton(Templated):
     def __init__(self):
+        self.is_active = g.live_config['thebutton_is_active']
         self.num_participants = get_num_participants()
         self.has_expired = has_timer_expired()
 
