@@ -80,8 +80,8 @@ class ButtonApiController(ApiController):
 
         flair_text = "%ss" % seconds_remaining
 
-        setattr(c.user, 'flair_%s_text' % g.thebutton_srid, flair_text)
-        setattr(c.user, 'flair_%s_css_class' % g.thebutton_srid, flair_css)
+        setattr(c.user, 'flair_%s_text' % g.live_config["thebutton_srid"], flair_text)
+        setattr(c.user, 'flair_%s_css_class' % g.live_config["thebutton_srid"], flair_css)
         c.user._commit()
 
 

@@ -9,14 +9,11 @@ class TheButton(Plugin):
         ConfigValue.tuple: [
             "thebutton_caches",
         ],
-        ConfigValue.int: [
-            "thebutton_srid",
-        ],
     }
 
     live_config = {
-        ConfigValue.str: [
-            "thebutton_id",
+        ConfigValue.int: [
+            "thebutton_srid",
         ],
     }
 
