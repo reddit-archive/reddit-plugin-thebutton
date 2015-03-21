@@ -9,16 +9,14 @@ from r2.lib.validator import (
     VModhash,
     VUser,
 )
-from r2.models.keyvalue import NamedGlobals
 
 from reddit_thebutton.models import (
     ACCOUNT_CREATION_CUTOFF,
-    ButtonPressesByDate,
     ButtonPressByUser,
-    get_current_press,
     get_seconds_left,
     has_timer_expired,
     has_timer_started,
+    press_button,
     set_current_press,
 )
 
@@ -46,21 +44,20 @@ class ButtonApiController(ApiController):
             # time has expired: no longer possible to press the button
             return
 
-        if not has_timer_started() and not c.user.employee:
+        has_started = has_timer_started()
+
+        if not has_started and not c.user.employee:
             # only employees can make the first press
             return
 
-        previous_press_time = get_current_press()
-        press_time = ButtonPressesByDate.press(c.user)
-        ButtonPressByUser.pressed(c.user, press_time)
-        set_current_press(press_time)
+        press_button(c.user)
 
         # don't flair employees
         if c.user.employee:
             return
 
         # don't flair on first press (the starter)
-        if not previous_press_time:
+        if not has_started:
             return
 
         if client_seconds_remaining is None:
