@@ -5,26 +5,44 @@
     from r2.lib.filters import jssafe
 %>
 
-<div class="thebutton-wrap c-hidden">
+<div class="thebutton-wrap ${'active' if not thing.has_expired else 'complete'}">
   <form class="thebutton-form">
+    <div class="thebutton-counter">
+      <span class="thebutton-participants">${format_number(thing.num_participants, locale='en')}</span>&#32;
+      <span class="thebutton-participants-description">&#32;participants</span>
+    </div>
+
     <h1>the button</h1>
 
-    <label for="thebutton"></label>
-    <button id="thebutton" title="BUTTON PRESS BUTTON PRESS IT BUTTON THE BUTTON PRESS IT PRESS THE BUTTON BUTTON BUTTON PRESS IT THE BUTTON THE BUTTON PRESS BUTTON IT PRESS IT THE BUTTON PRESS IT NOW">[you feel an overwhelming urge to press the button]</button>
+    <%
+    if not c.user_is_loggedin:
+      css_class = 'denied logged-out login-required'
+    elif thing.has_pressed:
+      css_class = 'pressed'
+    elif thing.has_expired:
+      css_class = 'denied has-expired'
+    elif thing.too_new:
+      css_class = 'denied too-new'
+    else: 
+      css_class = 'locked'
+    %>
 
-    <div class="thebutton-pie"></div>
+    <div class="thebutton-container ${css_class}">
+      <button id="thebutton" title="BUTTON PRESS BUTTON PRESS IT BUTTON THE BUTTON PRESS IT PRESS THE BUTTON BUTTON BUTTON PRESS IT THE BUTTON THE BUTTON PRESS BUTTON IT PRESS IT THE BUTTON PRESS IT NOW">[you feel an overwhelming urge to press the button]</button>
+    </div>
+
+    <div class="thebutton-pie-container">
+      <div class="thebutton-pie"></div>
+    </div>
 
     ## Todo - position absolute these to stop killing the browser perf.
-    <span id="thebutton-timer">
-      <span class="thebutton-numeral" id="thebutton-s-10s">0</span>
-      <span class="thebutton-numeral" id="thebutton-s-1s">0</span>
-      <span class="thebutton-numeral" id="thebutton-s-100ms">0</span>
-      <span class="thebutton-numeral" id="thebutton-s-10ms">0</span>
-    </span>
-
-    <div class="thebutton-counter">
-      <span class="thebutton-participants">${format_number(thing.num_participants, locale='en')}</span><br />
-      <span class="thebutton-participants-description">&#32;participants</span>
+    <div class="thebutton-container">
+      <span id="thebutton-timer">
+        <span class="thebutton-numeral" id="thebutton-s-10s">0</span>
+        <span class="thebutton-numeral" id="thebutton-s-1s">0</span>
+        <span class="thebutton-numeral" id="thebutton-s-100ms">0</span>
+        <span class="thebutton-numeral" id="thebutton-s-10ms">0</span>
+      </span>
     </div>
   </form>
 </div>
