@@ -2,7 +2,6 @@ from pylons import c, g
 
 from r2.controllers import add_controller
 from r2.controllers.api import ApiController
-from r2.controllers.reddit_base import RedditController
 from r2.lib.validator import (
     validate,
     VInt,
@@ -82,10 +81,3 @@ class ButtonApiController(ApiController):
         setattr(c.user, 'flair_%s_text' % g.live_config["thebutton_srid"], flair_text)
         setattr(c.user, 'flair_%s_css_class' % g.live_config["thebutton_srid"], flair_css)
         c.user._commit()
-
-
-@add_controller
-class ButtonController(RedditController):
-    def GET_button(self):
-        content = TheButton()
-        return TheButtonBase(content=content).render()
