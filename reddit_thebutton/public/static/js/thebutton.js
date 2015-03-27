@@ -29,6 +29,7 @@ r.thebutton = {
         this._msgSecondsLeft = 0;
         this._tickTime = '';
         this._tickMac = '';
+        this._lastMsLeft = Infinity;
 
         // Direct to the textNode for perf
         this._timerTextNodes = [
@@ -156,9 +157,10 @@ r.thebutton = {
         var numParticipants = message.participants_text;
         var msLeft = secondsLeft * 1000;
 
-        if (msLeft > r.thebutton._msLeft) {
+        if (msLeft > r.thebutton._lastMsLeft) {
           this.pulse();
         }
+        r.thebutton._lastMsLeft = msLeft;
 
         r.thebutton._msLeft = secondsLeft * 1000;
         if (!r.thebutton._countdownInterval) {
