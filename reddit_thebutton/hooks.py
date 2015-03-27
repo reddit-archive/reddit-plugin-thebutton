@@ -1,5 +1,6 @@
 from pylons import g, c
 
+from r2.config import feature
 from r2.lib import websockets
 from r2.lib.hooks import HookRegistrar
 from r2.lib.pages import SideBox
@@ -24,6 +25,9 @@ def add_js_config(config):
 
 @hooks.on('home.add_sidebox')
 def add_home_sidebox():
+    if not feature.is_enabled('thebutton_on_homepage'):
+        return None
+
     try:
         sr = Subreddit._byID(g.thebutton_srid, data=True, stale=True)
     except NotFound:
