@@ -60,10 +60,6 @@ class ButtonApiController(ApiController):
 
         press_button(c.user)
 
-        # don't flair employees
-        if c.user.employee:
-            return
-
         # don't flair on first press (the starter)
         if not has_started:
             return
