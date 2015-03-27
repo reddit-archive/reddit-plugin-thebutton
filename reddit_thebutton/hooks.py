@@ -18,7 +18,7 @@ def add_thebutton(controller):
 
 @hooks.on('js_config')
 def add_js_config(config):
-    if getattr(c.site, '_id', None) == g.thebutton_srid:
+    if getattr(c.site, '_id', None) == g.live_config["thebutton_srid"]:
         config['thebutton_websocket'] = websockets.make_url("/thebutton",
                                                             max_age=24 * 60 * 60)
 
@@ -29,7 +29,8 @@ def add_home_sidebox():
         return None
 
     try:
-        sr = Subreddit._byID(g.thebutton_srid, data=True, stale=True)
+        sr = Subreddit._byID(
+            g.live_config["thebutton_srid"], data=True, stale=True)
     except NotFound:
         return None
 
