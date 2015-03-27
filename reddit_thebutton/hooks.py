@@ -13,7 +13,8 @@ hooks = HookRegistrar()
 
 @hooks.on("hot.get_content")
 def add_thebutton(controller):
-    return TheButton()
+    if getattr(c.site, '_id', None) == g.live_config["thebutton_srid"]:
+        return TheButton()
 
 
 @hooks.on('js_config')
