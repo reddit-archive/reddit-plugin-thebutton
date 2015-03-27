@@ -21,7 +21,7 @@ class TheButton(Plugin):
     }
 
     js = {
-        "thebutton": Module("thebutton.js",
+        "reddit": Module("reddit.js",
             "websocket.js",
             "thebutton.js",
         )

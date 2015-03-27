@@ -20,6 +20,10 @@ r.thebutton = {
     },
 
     init: function() {
+        if($('#thebutton').length === 0) {
+          return;
+        }
+
         this._chart = new google.visualization.PieChart($('.thebutton-pie').get(0));
         this._msLeft = 0;
 
