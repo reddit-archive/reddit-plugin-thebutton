@@ -201,4 +201,6 @@ r.thebutton = {
     },
 }
 
-r.thebutton.init();
+$(function() {
+  r.thebutton.init();
+});
