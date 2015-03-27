@@ -50,17 +50,10 @@ class TheButton(Plugin):
             action="press_button",
         )
 
-        mc(
-            "/thebutton",
-            controller="button",
-            action="button",
-        )
-
     def load_controllers(self):
         from r2.lib.pages import Reddit
         from reddit_thebutton.controllers import (
             ButtonApiController,
-            ButtonController,
         )
 
         Reddit.extra_stylesheets.append('thebutton.less')
