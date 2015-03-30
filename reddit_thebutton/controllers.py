@@ -49,7 +49,7 @@ class ButtonApiController(ApiController):
 
         user_has_pressed = ButtonPressByUser.has_pressed(c.user)
 
-        if user_has_pressed and not c.user.employee:
+        if user_has_pressed:
             return
 
         if has_timer_expired():
