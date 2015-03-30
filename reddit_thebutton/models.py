@@ -77,7 +77,7 @@ def press_button(user):
 
 def _update_timer():
     if not g.live_config['thebutton_is_active']:
-        g.log.debug("%s: thebutton is inactive" % datetime.now(g.tz))
+        print "%s: thebutton is inactive" % datetime.now(g.tz)
         websockets.send_broadcast(
             namespace="/thebutton", type="not_started", payload={})
         return
@@ -85,7 +85,7 @@ def _update_timer():
     expiration_time = has_timer_expired()
     if expiration_time:
         seconds_elapsed = (datetime.now(g.tz) - expiration_time).total_seconds()
-        g.log.debug("%s: timer is expired %s ago" % (datetime.now(g.tz), seconds_elapsed))
+        print "%s: timer is expired %s ago" % (datetime.now(g.tz), seconds_elapsed)
 
         websockets.send_broadcast(
             namespace="/thebutton", type="expired",
@@ -93,21 +93,21 @@ def _update_timer():
         return
 
     if not has_timer_started():
-        g.log.debug("%s: timer not started" % datetime.now(g.tz))
+        print "%s: timer not started" % datetime.now(g.tz)
         websockets.send_broadcast(
             namespace="/thebutton", type="not_started", payload={})
         return
 
     seconds_left = round(get_seconds_left())
     if seconds_left < 0:
-        g.log.debug("%s: timer just expired" % datetime.now(g.tz))
+        print "%s: timer just expired" % datetime.now(g.tz)
         mark_timer_expired(datetime.now(g.tz))
         websockets.send_broadcast(
             namespace="/thebutton", type="just_expired", payload={})
     else:
         now = datetime.now(g.tz)
         tick_mac = make_tick_mac(seconds_left, now)
-        g.log.debug("%s: timer is ticking %s" % (datetime.now(g.tz), seconds_left))
+        print "%s: timer is ticking %s" % (datetime.now(g.tz), seconds_left)
         websockets.send_broadcast(
             namespace="/thebutton", type="ticking",
             payload={
