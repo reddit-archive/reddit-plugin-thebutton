@@ -26,6 +26,9 @@ r.thebutton = {
 
         this._chart = new google.visualization.PieChart($('.thebutton-pie').get(0));
         this._msLeft = 0;
+        this._msgSecondsLeft = 0;
+        this._tickTime = '';
+        this._tickMac = '';
 
         // Direct to the textNode for perf
         this._timerTextNodes = [
@@ -71,10 +74,15 @@ r.thebutton = {
             return;
           }
 
-          var secondsLeft = $('#thebutton-timer').val()
           r.thebutton._countdownInterval = window.clearInterval(r.thebutton._countdownInterval);
           r.thebutton._setTimer(60000);
-          $.request('press_button', {"seconds": secondsLeft}, function(response) {
+          var params = {
+            seconds: $('#thebutton-timer').val(),
+            prev_seconds: r.thebutton._msgSecondsLeft,
+            tick_time: r.thebutton._tickTime,
+            tick_mac: r.thebutton._tickMac
+          };
+          $.request('press_button', params, function(response) {
             console.log(response);
           });
 
@@ -142,6 +150,9 @@ r.thebutton = {
 
     _onTicking: function(message) {
         var secondsLeft = message.seconds_left;
+        this._tickTime = message.now_str;
+        this._msgSecondsLeft = secondsLeft;
+        this._tickMac = message.tick_mac;
         var numParticipants = message.participants_text;
         var msLeft = secondsLeft * 1000;
 
