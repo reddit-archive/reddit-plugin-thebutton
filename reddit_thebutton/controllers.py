@@ -47,7 +47,9 @@ class ButtonApiController(ApiController):
         if c.user._date > ACCOUNT_CREATION_CUTOFF:
             return
 
-        if ButtonPressByUser.has_pressed(c.user) and not c.user.employee:
+        user_has_pressed = ButtonPressByUser.has_pressed(c.user)
+
+        if user_has_pressed and not c.user.employee:
             return
 
         if has_timer_expired():
@@ -94,6 +96,10 @@ class ButtonApiController(ApiController):
 
         # don't flair on first press (the starter)
         if not has_started:
+            return
+
+        if user_has_pressed:
+            # don't flair on multiple employee presses
             return
 
         if cheater:
