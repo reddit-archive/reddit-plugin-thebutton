@@ -109,9 +109,13 @@
         font-size: 10px;
         content: 'the experiment has not yet started';
     }
+
+    &.locked:after {
+        content: 'connecting...';
+    }
 }
 
-.thebutton-container.locked {
+.thebutton-container.active.locked {
     &:before {
         background-color: rgba(73,73,73,0.90);
         background-image: data-uri('locked-icon.png');
@@ -120,7 +124,7 @@
     }
 }
 
-.thebutton-container.locked:hover,
+.thebutton-container.active.locked:hover,
 .thebutton-container.unlocking {
     &:before {
         transform: translate(0, -10px) scale(1, 1);

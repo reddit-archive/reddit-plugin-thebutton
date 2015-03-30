@@ -60,7 +60,7 @@ r.thebutton = {
 
         $theButtonContainer.on('click', function(e) {
           var $el = $(this);
-          if ($el.hasClass('locked')) {
+          if ($el.is('.active.locked')) {
             $el.addClass('unlocking').removeClass('locked');
             setTimeout(function() {
               $el.removeClass('unlocking').addClass('unlocked');
@@ -92,8 +92,6 @@ r.thebutton = {
 
           r.thebutton.pulse();
         })
-
-        this._countdownInterval = window.setInterval(r.thebutton._countdown, 10);
     },
 
     _drawPie: function(msLeft, msTotal) {
@@ -149,10 +147,11 @@ r.thebutton = {
     _onTicking: function(message) {
         if (!r.thebutton._started) {
           var $theButtonContainer = $('#thebutton').parent();
-          if ($theButtonContainer.hasClass('not-active')) {
-            $theButtonContainer.removeClass('denied not-active').addClass('locked');
+          if ($theButtonContainer.is('.not-active, .locked')) {
+            $theButtonContainer.removeClass('denied not-active').addClass('active locked');
           }
           r.thebutton._started = true;
+          r.thebutton._countdownInterval = window.setInterval(r.thebutton._countdown, 10);
         }
 
         var secondsLeft = message.seconds_left;

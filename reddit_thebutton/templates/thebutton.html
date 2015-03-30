@@ -26,7 +26,7 @@
     elif not thing.is_active: 
       css_class = 'denied not-active'
     else: 
-      css_class = 'locked'
+      css_class = 'denied locked'
     %>
 
     <div class="thebutton-container ${css_class}">
@@ -40,10 +40,10 @@
     ## Todo - position absolute these to stop killing the browser perf.
     <div class="thebutton-container">
       <span id="thebutton-timer">
-        <span class="thebutton-numeral" id="thebutton-s-10s">0</span>
-        <span class="thebutton-numeral" id="thebutton-s-1s">0</span>
-        <span class="thebutton-numeral" id="thebutton-s-100ms">0</span>
-        <span class="thebutton-numeral" id="thebutton-s-10ms">0</span>
+        <span class="thebutton-numeral" id="thebutton-s-10s">?</span>
+        <span class="thebutton-numeral" id="thebutton-s-1s">?</span>
+        <span class="thebutton-numeral" id="thebutton-s-100ms">?</span>
+        <span class="thebutton-numeral" id="thebutton-s-10ms">?</span>
       </span>
     </div>
   </form>
