@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+import hashlib
+import hmac
 from time import sleep
 
 from babel.numbers import format_number
@@ -7,6 +9,7 @@ from pylons import g
 
 from r2.lib import websockets
 from r2.lib.db import tdb_cassandra
+from r2.lib.utils import constant_time_compare
 from r2.models import Account
 from r2.models.keyvalue import NamedGlobals
 
@@ -18,6 +21,8 @@ EXPIRATION_TIME = timedelta(seconds=60)
 EXPIRATION_FUDGE_SECONDS = 2
 UPDATE_INTERVAL_SECONDS = 1
 ACCOUNT_CREATION_CUTOFF = datetime(2015, 4, 1, 0, 0, tzinfo=g.tz)
+THEBUTTON_SECRET = "sdgasidougo1uo998sd"
+DATE_FORMAT = "%Y-%m-%d-%H-%M-%S"
 
 
 def _EXPIRED_KEY():
@@ -100,15 +105,41 @@ def _update_timer():
         websockets.send_broadcast(
             namespace="/thebutton", type="just_expired", payload={})
     else:
-        # TODO: don't update the timer, depend on the frontend to manage it
+        now = datetime.now(g.tz)
+        tick_mac = make_tick_mac(seconds_left, now)
         g.log.debug("%s: timer is ticking %s" % (datetime.now(g.tz), seconds_left))
         websockets.send_broadcast(
             namespace="/thebutton", type="ticking",
             payload={
                 "seconds_left": seconds_left,
+                "now_str": datetime_to_str(now),
+                "tick_mac": tick_mac,
                 "participants_text": format_number(get_num_participants(), locale='en'),
             },
         )
+
+
+def datetime_to_str(dt):
+    return dt.strftime(DATE_FORMAT)
+
+
+def str_to_datetime(s):
+    dt = datetime.strptime(s, DATEFORMAT)
+    dt = dt.replace(tzinfo=g.tz)
+
+
+def make_tick_mac(seconds_left, now_str):
+    message = "%s/%s" % (seconds_left, now_str)
+    tick_mac = hmac.new(
+        THEBUTTON_SECRET, message, hashlib.sha1).hexdigest()
+    return tick_mac
+
+
+def check_tick_mac(seconds_left, tick_time, observed_mac):
+    expected_message = "%s/%s" % (seconds_left, tick_time)
+    expected_mac = hmac.new(
+        THEBUTTON_SECRET, expected_message, hashlib.sha1).hexdigest()
+    return constant_time_compare(expected_mac, observed_mac)
 
 
 def update_timer():
