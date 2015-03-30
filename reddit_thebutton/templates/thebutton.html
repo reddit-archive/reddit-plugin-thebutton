@@ -23,6 +23,8 @@
       css_class = 'denied has-expired'
     elif thing.too_new:
       css_class = 'denied too-new'
+    elif not thing.is_active: 
+      css_class = 'denied not-active'
     else: 
       css_class = 'locked'
     %>

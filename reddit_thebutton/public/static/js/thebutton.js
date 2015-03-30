@@ -40,6 +40,7 @@ r.thebutton = {
         ];
 
         r.debug("in r.thebutton.init()")
+        this._started = false;
 
         if (r.config.thebutton_websocket) {
             r.debug("got thebutton_websocket")
@@ -146,6 +147,14 @@ r.thebutton = {
     },
 
     _onTicking: function(message) {
+        if (!r.thebutton._started) {
+          var $theButtonContainer = $('#thebutton').parent();
+          if ($theButtonContainer.hasClass('not-active')) {
+            $theButtonContainer.removeClass('denied not-active').addClass('locked');
+          }
+          r.thebutton._started = true;
+        }
+
         var secondsLeft = message.seconds_left;
         this._tickTime = message.now_str;
         this._msgSecondsLeft = secondsLeft;
