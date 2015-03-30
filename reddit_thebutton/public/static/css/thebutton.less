@@ -11,6 +11,7 @@
 }
 
 @color-thebutton-container: #EAEAEA;
+@color-thebutton-pulse2: darken(@color-thebutton-container, 40%);
 
 .active .thebutton-form {
     background-image: radial-gradient(50% 125%, #FFFFFF 25%, rgba(255,255,255,0.00) 100%);
@@ -174,6 +175,38 @@
     -webkit-animation: pulse 1s ease;
     -moz-animation: pulse 1s ease;
     animation: pulse 1s ease;
+}
+
+@-webkit-keyframes pulse2 {
+    0% {
+        background-color: @color-thebutton-pulse2;
+    }
+    100% {
+        background-color: @color-thebutton-container;
+    }
+}
+@-moz-keyframes pulse2 {
+    0% {
+        background-color: @color-thebutton-pulse2;
+    }
+    100% {
+        background-color: @color-thebutton-container;
+    }
+}
+@keyframes pulse2 {
+    0% {
+        background-color: @color-thebutton-pulse2;
+    }
+    100% {
+        background-color: @color-thebutton-container;
+    }
+}
+
+.thebutton-pie-container.pulse2,
+.thebutton-container.pulse2 {
+    -webkit-animation: pulse2 1s ease;
+    -moz-animation: pulse2 1s ease;
+    animation: pulse2 1s ease;
 }
 
 #thebutton {

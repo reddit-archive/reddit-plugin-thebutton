@@ -89,11 +89,7 @@ r.thebutton = {
 
           $theButtonContainer.addClass('pressed').removeClass('unlocked');
 
-          $els = $('.thebutton-container, .thebutton-pie-container');
-          $els.removeClass('pulse');
-          setTimeout(function() {
-            $els.addClass('pulse');
-          },1)
+          r.thebutton.pulse();
         })
 
         this._countdownInterval = window.setInterval(r.thebutton._countdown, 10);
@@ -158,7 +154,7 @@ r.thebutton = {
         var msLeft = secondsLeft * 1000;
 
         if (msLeft > r.thebutton._lastMsLeft) {
-          this.pulse();
+          this.pulse2();
         }
         r.thebutton._lastMsLeft = msLeft;
 
@@ -173,14 +169,25 @@ r.thebutton = {
         $('.thebutton-participants').text(message.participants_text);
     },
 
+    // blue pulse on all three divs when user clicks the button
     pulse: function() {
+      $els = $('.thebutton-container, .thebutton-pie-container');
+      $els.removeClass('pulse pulse2');
+
+      setTimeout(function() {
+        $els.addClass('pulse');
+      },1)
+    },
+
+    // grey pulse on center div when timer resets from another user
+    pulse2: function() {
       var $el = $('.thebutton-pie-container');
       var self = this;
 
-      $el.removeClass('pulse');
+      $el.removeClass('pulse pulse2');
 
       setTimeout(function() {
-        $el.addClass('pulse');
+        $el.addClass('pulse2');
       }, 1);
     },
 
@@ -190,7 +197,6 @@ r.thebutton = {
       $el = $('#thebutton').parent();
       var stateClasses = 'denied logged-out too-new has-expired pressed locked unlocked';
       $el.removeClass(stateClasses);
-      $('.thebutton-container, .thebutton-pie-container').removeClass('pulse');
       r.thebutton._msLeft = msLeft;
       r.thebutton.pulse();
 
