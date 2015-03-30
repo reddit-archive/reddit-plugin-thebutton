@@ -93,6 +93,9 @@ class ButtonApiController(ApiController):
                 cheater = True
 
         press_button(c.user)
+        g.stats.simple_event("thebutton.press")
+        if cheater:
+            g.stats.simple_event("thebutton.cheater")
 
         # don't flair on first press (the starter)
         if not has_started:
