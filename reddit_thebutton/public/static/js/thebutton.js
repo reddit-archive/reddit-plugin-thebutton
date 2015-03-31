@@ -139,9 +139,7 @@ r.thebutton = {
         $('.thebutton-wrap').removeClass('active').addClass('complete');
 
         $el = $('#thebutton').parent();
-        if (!$el.is('.pressed')) {
-          $el.removeClass('unlocked locked').addClass('denied has-expired');
-        }
+        $el.removeClass('unlocked locked logged-out pressed too-new not-active').addClass('denied has-expired');
     },
 
     _onTicking: function(message) {
