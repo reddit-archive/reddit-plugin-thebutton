@@ -58,8 +58,8 @@ class ButtonApiController(ApiController):
 
         has_started = has_timer_started()
 
-        if not has_started and not c.user.employee:
-            # only employees can make the first press
+        if not has_started:
+            # the timer can only be started through reddit-shell
             return
 
         cheater = False
