@@ -15,12 +15,12 @@
     <h1>the button</h1>
 
     <%
-    if not c.user_is_loggedin:
+    if thing.has_expired:
+      css_class = 'denied has-expired'
+    elif not c.user_is_loggedin:
       css_class = 'denied logged-out login-required'
     elif thing.has_pressed:
       css_class = 'pressed'
-    elif thing.has_expired:
-      css_class = 'denied has-expired'
     elif thing.too_new:
       css_class = 'denied too-new'
     elif not thing.is_active: 
