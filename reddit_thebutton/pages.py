@@ -26,7 +26,8 @@ class TheButton(Templated):
 
         if c.user_is_loggedin:
             self.too_new = c.user._date > ACCOUNT_CREATION_CUTOFF
-            self.has_pressed = ButtonPressByUser.has_pressed(c.user)
+            self.has_pressed = (ButtonPressByUser.has_pressed(c.user) and
+                not c.user.employee)
         else:
             self.too_new = False
             self.has_pressed = False
