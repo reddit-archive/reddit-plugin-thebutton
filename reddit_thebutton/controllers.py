@@ -81,7 +81,7 @@ class ButtonApiController(ApiController):
             # check to make sure tick_time wasn't too long ago
             then = str_to_datetime(tick_time)
             now = datetime.now(g.tz)
-            if (now - then).total_seconds() > 60:
+            if then and (now - then).total_seconds() > 60:
                 # client sent an old (but potentially valid) mac, etc.
                 seconds_remaining = max(0, int(get_seconds_left()))
                 cheater = True
