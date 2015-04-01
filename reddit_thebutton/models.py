@@ -125,7 +125,7 @@ def datetime_to_str(dt):
 
 
 def str_to_datetime(s):
-    dt = datetime.strptime(s, DATEFORMAT)
+    dt = datetime.strptime(s, DATE_FORMAT)
     dt = dt.replace(tzinfo=g.tz)
 
 
