@@ -36,7 +36,7 @@ def add_home_sidebox():
         return None
 
     return SideBox(
-        title="press the button.",
+        title="Did you press the button?",
         css_class="thebutton_sidebox",
         link="/r/%s" % sr.name,
         target="_blank",
