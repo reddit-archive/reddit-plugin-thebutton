@@ -62,40 +62,15 @@ class ButtonApiController(ApiController):
             # the timer can only be started through reddit-shell
             return
 
-        cheater = False
         if (seconds_remaining is None or
                 previous_seconds is None or
                 tick_time is None or
                 tick_mac is None):
             # incomplete info from client, just let them press it anyways
             seconds_remaining = max(0, int(get_seconds_left()))
-        elif not check_tick_mac(previous_seconds, tick_time, tick_mac):
-            # can't trust the values sent by the client
-            seconds_remaining = max(0, int(get_seconds_left()))
-            cheater = True
-        else:
-            # client sent a valid mac so we can trust:
-            # previous_seconds - the timer value at the last tick
-            # tick_time - the datetime at the last tick
-
-            # check to make sure tick_time wasn't too long ago
-            then = str_to_datetime(tick_time)
-            now = datetime.now(g.tz)
-            if (now - then).total_seconds() > 60:
-                # client sent an old (but potentially valid) mac, etc.
-                seconds_remaining = max(0, int(get_seconds_left()))
-                cheater = True
-
-            # check to make sure the seconds remaining they reported isn't too
-            # far off from the timer value at the previous tick
-            if previous_seconds - seconds_remaining > 10:
-                seconds_remaining = max(0, int(get_seconds_left()))
-                cheater = True
 
         press_button(c.user)
         g.stats.simple_event("thebutton.press")
-        if cheater:
-            g.stats.simple_event("thebutton.cheater")
 
         # don't flair on first press (the starter)
         if not has_started:
@@ -105,9 +80,7 @@ class ButtonApiController(ApiController):
             # don't flair on multiple employee presses
             return
 
-        if cheater:
-            flair_css = "cheater"
-        elif seconds_remaining > 51:
+        if seconds_remaining > 51:
             flair_css = "press-6"
         elif seconds_remaining > 41:
             flair_css = "press-5"
