@@ -106,13 +106,14 @@ def _update_timer():
             namespace="/thebutton", type="just_expired", payload={})
     else:
         now = datetime.now(g.tz)
-        tick_mac = make_tick_mac(seconds_left, now)
+        now_str = datetime_to_str(now)
+        tick_mac = make_tick_mac(seconds_left, now_str)
         print "%s: timer is ticking %s" % (datetime.now(g.tz), seconds_left)
         websockets.send_broadcast(
             namespace="/thebutton", type="ticking",
             payload={
                 "seconds_left": seconds_left,
-                "now_str": datetime_to_str(now),
+                "now_str": now_str,
                 "tick_mac": tick_mac,
                 "participants_text": format_number(get_num_participants(), locale='en'),
             },
