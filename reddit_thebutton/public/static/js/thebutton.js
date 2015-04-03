@@ -79,7 +79,7 @@ r.thebutton = {
           r.thebutton._countdownInterval = window.clearInterval(r.thebutton._countdownInterval);
           r.thebutton._setTimer(60000);
           var params = {
-            seconds: $('#thebutton-timer').val(),
+            seconds: Math.floor(r.thebutton._msLeft / 1000),
             prev_seconds: r.thebutton._msgSecondsLeft,
             tick_time: r.thebutton._tickTime,
             tick_mac: r.thebutton._tickMac
