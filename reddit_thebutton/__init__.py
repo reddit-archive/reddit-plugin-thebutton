@@ -18,6 +18,12 @@ class TheButton(Plugin):
         ConfigValue.bool: [
             "thebutton_is_active",
         ],
+        ConfigValue.str: [
+            "thebutton_nopress_flair_class",
+            "thebutton_nopress_flair_text",
+            "thebutton_cantpress_flair_class",
+            "thebutton_cantpress_flair_text",
+        ],
     }
 
     js = {
@@ -60,3 +66,14 @@ class TheButton(Plugin):
 
         from reddit_thebutton.hooks import hooks
         hooks.register_all()
+
+    def declare_queues(self, queues):
+        from r2.config.queues import MessageQueue
+        queues.declare({
+            "buttonflair_q": MessageQueue(),
+        })
+
+        queues.buttonflair_q << (
+            "new_comment",
+            "new_link",
+        )
