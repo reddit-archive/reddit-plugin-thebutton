@@ -24,7 +24,7 @@ def update_flair_counts():
                 if user._date < ACCOUNT_CREATION_CUTOFF:
                     flair = "no-press"
                 else:
-                    flair = "no-press"
+                    flair = "cant-press"
 
             flairs[flair] += 1
 
