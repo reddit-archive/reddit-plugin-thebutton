@@ -86,9 +86,12 @@ class ButtonApiController(ApiController):
                 seconds_remaining = max(0, int(get_seconds_left()))
                 cheater = True
 
-            # check to make sure the seconds remaining they reported isn't too
-            # far off from the timer value at the previous tick
-            if previous_seconds - seconds_remaining > 10:
+            # GOTCHA: the client actually sends the same value for
+            # previous_seconds and seconds_remaining so make sure those match.
+            # If the client sent down its own ticking down timer as
+            # seconds_remaining we would want to compare to previous_seconds to
+            # make sure they weren't too far apart
+            if previous_seconds != seconds_remaining:
                 seconds_remaining = max(0, int(get_seconds_left()))
                 cheater = True
 
