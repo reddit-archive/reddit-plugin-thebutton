@@ -5,6 +5,7 @@ from time import sleep
 
 from babel.numbers import format_number
 from pycassa.cassandra.ttypes import NotFoundException
+from pycassa.types import DateType
 from pylons import g
 
 from r2.lib import websockets
@@ -36,10 +37,11 @@ def _CURRENT_PRESS_KEY():
 def _PARTICIPANTS_KEY():
     return "%s.%s" % (g.live_config["thebutton_srid"], PARTICIPANTS_KEY)
 
+
 class ButtonPressByUser(tdb_cassandra.View):
     _use_db = True
     _connection_pool = 'main'
-    _compare_with = tdb_cassandra.DateType()
+    _compare_with = DateType()
     _extra_schema_creation_args = {
         "key_validation_class": tdb_cassandra.ASCII_TYPE,
     }
